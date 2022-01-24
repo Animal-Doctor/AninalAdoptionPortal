@@ -31,11 +31,29 @@ jobs:
         path: ${{github.workspace}}/built # or path/to/artifact
     
   deployToDev:
-
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    
     runs-on: ubuntu-latest
 
     steps:
+<<<<<<< HEAD
       - uses: actions/download-artifact@v2
       with:
         name: AnimalAdoption
         path: ${{github.workspace}}/built
+=======
+    - uses: actions/download-artifact@v2
+      with:
+        name: AnimalAdoption
+        path: ${{github.workspace}}/built
+        
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2
+      with:
+        # Name of the Azure Web App
+        app-name: AnimalAdoptionPortal
+        # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
+        package: ${{github.workspace}}/built
+        publish-profile: ${{secrets.PUBLISHEDSECRET}}
+>>>>>>> 8ca078457c6a17677f4f02946e2deecc249ac307
