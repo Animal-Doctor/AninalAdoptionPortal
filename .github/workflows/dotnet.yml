@@ -20,9 +20,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release
     - name: Publish
-      run: dotnet publish ${{github.workspace}}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --no-build --output ./built
+      run: dotnet publish ${{github.workspace}}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --configuration Release --no-build --output ./built
     - uses: actions/upload-artifact@v2
       with:
         name: AnimalAdoption
