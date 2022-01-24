@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test
-      run: dotnet test ${{github.workspace}}/AnimalAdoption.Web.Portal.UnitTests.AnimalAdoption.Web.Portal.UnitTests.csproj --configuration Release --no-build
+      run: dotnet test ${{github.workspace}}/AnimalAdoption.Web.Portal.UnitTests/AnimalAdoption.Web.Portal.UnitTests.csproj --configuration Release --no-build
     - name: Publish
       run: dotnet publish ${{github.workspace}}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --configuration Release --no-build --output ./built
     - uses: actions/upload-artifact@v2
