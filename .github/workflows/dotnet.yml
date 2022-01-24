@@ -31,6 +31,7 @@ jobs:
         path: ${{github.workspace}}/built # or path/to/artifact
     
   deployToDev:
+    needs: build
 
     runs-on: ubuntu-latest
 
