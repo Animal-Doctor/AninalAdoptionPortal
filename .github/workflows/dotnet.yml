@@ -21,3 +21,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Publish
+      run: dotnet publish ${{github.workspace}}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --no-build --output ./built
+    - uses: actions/upload-artifact@v2
+      with:
+        name: AnimalAdoption
+        path: ${{github.workspace}}/built # or path/to/artifact
