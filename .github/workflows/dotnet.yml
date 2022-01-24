@@ -31,8 +31,9 @@ jobs:
         path: ${{github.workspace}}/built # or path/to/artifact
     
   deployToDev:
+    if: github.ref == 'refs/heads/master'
     needs: build
-
+    
     runs-on: ubuntu-latest
 
     steps:
