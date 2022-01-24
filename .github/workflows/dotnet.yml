@@ -48,5 +48,4 @@ jobs:
         app-name: AnimalAdoptionPortal
         # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
         package: ${{github.workspace}}/built
-        
-      
+        publish-profile: PUBLISHEDSECRET
