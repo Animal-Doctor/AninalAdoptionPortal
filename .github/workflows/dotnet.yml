@@ -29,3 +29,13 @@ jobs:
       with:
         name: AnimalAdoption
         path: ${{github.workspace}}/built # or path/to/artifact
+    
+  deployToDev:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/download-artifact@v2
+    with:
+      name: AnimalAdoption
+      path: ${{github.workspace}}/built
