@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2 
+    - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/download-artifact@v2
-    with:
-      name: AnimalAdoption
-      path: ${{github.workspace}}/built
+      - uses: actions/download-artifact@v2
+      with:
+        name: AnimalAdoption
+        path: ${{github.workspace}}/built
