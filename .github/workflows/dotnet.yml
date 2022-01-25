@@ -45,7 +45,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
         notification-summary: BUILD FAILED
-        notification-color: 'red'
+        notification-color: 'dc3545 '
         
     - name: Notification for build success
       uses: jdcargile/ms-teams-notification@v1.3
@@ -54,7 +54,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
         notification-summary: BUILD SUCCEEDED
-        notification-color: 'green'
+        notification-color: '28a745'
     
   deployToDev:
     if: github.ref == 'refs/heads/master'
