@@ -8,6 +8,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  PROD_APP_NAME: AnimalAdoptionPortalV2
+  
 jobs:
   build:
 
@@ -98,7 +101,7 @@ jobs:
             }
           ]
         mask-inputs: false
-        
+      
   automateInstancesCreation:
     if: github.ref == 'refs/heads/master'
     needs: build
@@ -118,9 +121,35 @@ jobs:
     - name: Azure CLI Action
       uses: Azure/cli@v1
       with:
-        # Specify the script here
-        inlineScript: az deployment group create --name AnimalAdoptionPortalV2 --resource-group DevOpsGitHub-2022-01-24-team-05-prod --template-file infra/template.bicep --parameters tenantGuid=ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039 appServicePlanName=AnimalAdoptionPortalV2-plan keyVaultName=AnimalAdoptionPortalV2kv webAppName=AnimalAdoptionPortalV2
-        # Azure CLI version to be used to execute the script. If not provided, latest version is used
-        # azcliversion: # optional, default is agentazcliversion
+        inlineScript: az deployment group create --name ${{env.PROD_APP_NAME}} --resource-group DevOpsGitHub-2022-01-24-team-05-prod --template-file infra/template.bicep --parameters tenantGuid=ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039 appServicePlanName=AnimalAdoptionPortalV2-plan keyVaultName=${{env.PROD_APP_NAME}}V2kv webAppName=${{env.PROD_APP_NAME}}
+     
+  deployToProd:
+    if: github.ref == 'refs/heads/master'
+    needs: [ build, automateInstancesCreation ]
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_SERVICE_PRINCIPAL}}
         
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2
+      with:
+        # Name of the Azure Web App
+        app-name: ${{env.PROD_APP_NAME}}
+        # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
+        package: ${{github.workspace}}/built
+    - name: Azure App Service Settings
+      uses: Azure/appservice-settings@v1
+      with:
+        app-name: ${{env.PROD_APP_NAME}}
+        app-settings-json: |
+          [
+            {
+              "name": "GlobalPassword",
+              "value": "@Microsoft.KeyVault(VaultName=${{env.PROD_APP_NAME}}V2kv;SecretName=GlobalPassword)"
+            }
+          ]
         
