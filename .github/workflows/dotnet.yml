@@ -43,6 +43,8 @@ jobs:
     needs: build
     
     runs-on: ubuntu-latest
+    env:
+      APP_NAME: AnimalAdoptionPortal
 
     steps:
     - uses: actions/download-artifact@v2
@@ -54,13 +56,14 @@ jobs:
       uses: Azure/webapps-deploy@v2
       with:
         # Name of the Azure Web App
-        app-name: AnimalAdoptionPortal
+        app-name: ${{env.APP_NAME}}
         # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
         package: ${{github.workspace}}/built
         publish-profile: ${{secrets.PUBLISHEDSECRET}}
     - name: Azure App Service Settings
       uses: Azure/appservice-settings@v1
       with:
+        app-name: ${{env.APP_NAME}}
         app-settings-json: ${{secrets.GLOBALPASSWORD}}
         
 
