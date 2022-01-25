@@ -121,7 +121,7 @@ jobs:
     - name: Azure CLI Action
       uses: Azure/cli@v1
       with:
-        inlineScript: az deployment group create --name ${{env.PROD_APP_NAME}} --resource-group DevOpsGitHub-2022-01-24-team-05-prod --template-file infra/template.bicep --parameters tenantGuid=ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039 appServicePlanName=AnimalAdoptionPortalV2-plan keyVaultName=${{env.PROD_APP_NAME}}V2kv webAppName=${{env.PROD_APP_NAME}}
+        inlineScript: az deployment group create --name ${{env.PROD_APP_NAME}} --resource-group DevOpsGitHub-2022-01-24-team-05-prod --template-file infra/template.bicep --parameters tenantGuid=ab5eb3d0-6067-40ee-b4c0-a2ce05dbf039 appServicePlanName=${{env.PROD_APP_NAME}}-plan keyVaultName=${{env.PROD_APP_NAME}}kv webAppName=${{env.PROD_APP_NAME}}
      
   deployToProd:
     if: github.ref == 'refs/heads/master'
