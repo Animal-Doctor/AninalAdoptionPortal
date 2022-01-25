@@ -89,7 +89,7 @@ jobs:
           [
             {
               "name": "GlobalPassword",
-              "value": "${{secrets.GLOBALPASSWORD}}"
+              "value": "@Microsoft.KeyVault(VaultName=animaladoptionportalkv;SecretName=GlobalPassword)"
             }
           ]
         mask-inputs: false
