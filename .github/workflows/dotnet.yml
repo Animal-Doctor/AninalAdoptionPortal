@@ -58,6 +58,10 @@ jobs:
         # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
         package: ${{github.workspace}}/built
         publish-profile: ${{secrets.PUBLISHEDSECRET}}
+    - name: Azure App Service Settings
+      uses: Azure/appservice-settings@v1
+      with:
         app-settings-json:: ${{secrets.GLOBALPASSWORD}}
+        
 
 
