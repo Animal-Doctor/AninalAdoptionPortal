@@ -37,6 +37,24 @@ jobs:
       with:
         name: AnimalAdoption
         path: ${{github.workspace}}/built # or path/to/artifact
+        
+    - name: Notification for build failure
+      uses: jdcargile/ms-teams-notification@v1.3
+      if: failure()
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+        notification-summary: BUILD FAILED
+        notification-color: 'red'
+        
+    - name: Notification for build success
+      uses: jdcargile/ms-teams-notification@v1.3
+      if: success()
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+        notification-summary: BUILD SUCCEEDED
+        notification-color: 'green'
     
   deployToDev:
     if: github.ref == 'refs/heads/master'
