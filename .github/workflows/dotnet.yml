@@ -2,7 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - 'master'
+      - 'feature/**'
   pull_request:
     branches: [ master ]
 
@@ -12,30 +14,105 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2 
+    - uses: actions/checkout@v2
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
       run: dotnet build --no-restore --configuration Release
+      
     - name: Test
       run: dotnet test ${{github.workspace}}/AnimalAdoption.Web.Portal.UnitTests/AnimalAdoption.Web.Portal.UnitTests.csproj --configuration Release --no-build
+      
     - name: Publish
       run: dotnet publish ${{github.workspace}}/AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --configuration Release --no-build --output ./built
+      
     - uses: actions/upload-artifact@v2
       with:
         name: AnimalAdoption
         path: ${{github.workspace}}/built # or path/to/artifact
+        
+    - uses: actions/upload-artifact@v2
+      with:
+        name: AnimalAdoptionForInfra
+        path: ${{github.workspace}}/template.bicep # or path/to/artifact
+        
+    - name: Notification for build failure
+      uses: jdcargile/ms-teams-notification@v1.3
+      if: failure()
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+        notification-summary: BUILD FAILED
+        notification-color: 'dc3545 '
+        
+    - name: Notification for build success
+      uses: jdcargile/ms-teams-notification@v1.3
+      if: success()
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+        notification-summary: BUILD SUCCEEDED
+        notification-color: '28a745'
     
   deployToDev:
-
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    
     runs-on: ubuntu-latest
+    env:
+      APP_NAME: AnimalAdoptionPortal
 
     steps:
     - uses: actions/download-artifact@v2
-    with:
-      name: AnimalAdoption
-      path: ${{github.workspace}}/built
+      with:
+        name: AnimalAdoption
+        path: ${{github.workspace}}/built
+    
+    - uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_SERVICE_PRINCIPAL}}
+        
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2
+      with:
+        # Name of the Azure Web App
+        app-name: ${{env.APP_NAME}}
+        # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
+        package: ${{github.workspace}}/built
+    - name: Azure App Service Settings
+      uses: Azure/appservice-settings@v1
+      with:
+        app-name: ${{env.APP_NAME}}
+        app-settings-json: |
+          [
+            {
+              "name": "GlobalPassword",
+              "value": "@Microsoft.KeyVault(VaultName=animaladoptionportalkv;SecretName=GlobalPassword)"
+            }
+          ]
+        mask-inputs: false
+        
+  automateInstancesCreation:
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: AnimalAdoptionForInfra
+        path: ${{github.workspace}}/infra
+        
+    - uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_SERVICE_PRINCIPAL}}
+        
+        
