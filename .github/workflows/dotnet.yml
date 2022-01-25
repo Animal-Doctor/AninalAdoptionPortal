@@ -61,7 +61,7 @@ jobs:
     - name: Azure App Service Settings
       uses: Azure/appservice-settings@v1
       with:
-        app-settings-json:: ${{secrets.GLOBALPASSWORD}}
+        app-settings-json: ${{secrets.GLOBALPASSWORD}}
         
 
 
