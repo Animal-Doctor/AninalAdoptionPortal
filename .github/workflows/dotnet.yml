@@ -130,6 +130,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: AnimalAdoption
+        path: ${{github.workspace}}/built
+        
     - uses: azure/login@v1
       with:
         creds: ${{secrets.AZURE_SERVICE_PRINCIPAL}}
