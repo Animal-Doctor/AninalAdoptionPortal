@@ -64,7 +64,13 @@ jobs:
       uses: Azure/appservice-settings@v1
       with:
         app-name: ${{env.APP_NAME}}
-        app-settings-json: ${{secrets.GLOBALPASSWORD}}
+        app-settings-json: |
+          [
+            {
+              "name": "GlobalPassword",
+              "value": "${{secrets.GLOBALPASSWORD}}"
+            }
+          ]
         mask-inputs: false
         
 
