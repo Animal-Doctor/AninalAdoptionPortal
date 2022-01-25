@@ -38,6 +38,11 @@ jobs:
         name: AnimalAdoption
         path: ${{github.workspace}}/built # or path/to/artifact
         
+    - uses: actions/upload-artifact@v2
+      with:
+        name: AnimalAdoptionForInfra
+        path: ${{github.workspace}}/template.bicep # or path/to/artifact
+        
     - name: Notification for build failure
       uses: jdcargile/ms-teams-notification@v1.3
       if: failure()
@@ -94,5 +99,20 @@ jobs:
           ]
         mask-inputs: false
         
-
-
+  automateInstancesCreation:
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: AnimalAdoptionForInfra
+        path: ${{github.workspace}}/infra
+        
+    - uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_SERVICE_PRINCIPAL}}
+        
+        
